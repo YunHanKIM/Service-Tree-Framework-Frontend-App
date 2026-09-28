@@ -6,6 +6,7 @@ describe('errorMessage', () => {
     expect(errorMessage(new ApiError('DUPLICATE_PENDING'))).toMatch(/이미 대기 중인 신청/);
     expect(errorMessage(new ApiError('ALREADY_PROCESSED'))).toMatch(/이미 처리된/);
     expect(errorMessage(new ApiError('NETWORK'))).toMatch(/네트워크/);
+    expect(errorMessage(new ApiError('CONFIRM_EMAIL'))).toMatch(/확인 메일/);
   });
 
   it('알 수 없는 오류는 일반 문구', () => {
