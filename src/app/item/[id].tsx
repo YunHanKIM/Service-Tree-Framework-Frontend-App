@@ -14,11 +14,13 @@ import { itemBadge } from '../../components/labels';
 import { colors, spacing } from '../../components/theme';
 import { addDays, todayInSeoul } from '../../domain/dueDate';
 import { AFFECTS, useApiMutation, useItem } from '../../hooks/queries';
+import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus';
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { profile } = useSession();
   const item = useItem(id);
+  useRefreshOnFocus(item.refetch);
   const today = todayInSeoul();
   const [dueDate, setDueDate] = useState(addDays(today, 3));
   const createRequest = useApiMutation((due: string) => api.createRequest(id, due), AFFECTS.request);

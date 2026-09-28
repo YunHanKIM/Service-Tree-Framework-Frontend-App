@@ -11,6 +11,7 @@ import { formatDateTime } from '../../components/labels';
 import { colors, spacing } from '../../components/theme';
 import { isOverdue, todayInSeoul } from '../../domain/dueDate';
 import { AFFECTS, useAllLoans, useAllRequests, useApiMutation } from '../../hooks/queries';
+import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus';
 
 export default function AdminScreen() {
   const requests = useAllRequests();
@@ -27,6 +28,7 @@ export default function AdminScreen() {
   const returning = loans.data?.filter((l) => l.status === 'return_requested') ?? [];
   const overdue = loans.data?.filter((l) => l.status === 'active' && isOverdue(l.dueDate, today)) ?? [];
   const refetch = () => Promise.all([requests.refetch(), loans.refetch()]);
+  useRefreshOnFocus(refetch);
 
   return (
     <StateView

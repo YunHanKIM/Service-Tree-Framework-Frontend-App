@@ -8,6 +8,7 @@ import { formatDateTime, loanBadge, requestBadge } from '../../components/labels
 import { colors, spacing } from '../../components/theme';
 import { isOverdue, todayInSeoul } from '../../domain/dueDate';
 import { AFFECTS, useApiMutation, useMyLoans, useMyRequests } from '../../hooks/queries';
+import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus';
 
 export default function MyRentalsScreen() {
   const loans = useMyLoans();
@@ -20,6 +21,7 @@ export default function MyRentalsScreen() {
   const pending = requests.data?.filter((r) => r.status === 'pending') ?? [];
   const pastRequests = requests.data?.filter((r) => r.status !== 'pending') ?? [];
   const refetch = () => Promise.all([loans.refetch(), requests.refetch()]);
+  useRefreshOnFocus(refetch);
 
   return (
     <StateView

@@ -8,6 +8,7 @@ import { itemBadge } from '../../components/labels';
 import { colors, spacing } from '../../components/theme';
 import type { Item, ItemStatus } from '../../domain/types';
 import { useItems } from '../../hooks/queries';
+import { useRefreshOnFocus } from '../../hooks/useRefreshOnFocus';
 
 const FILTERS: { label: string; value?: ItemStatus }[] = [
   { label: '전체' },
@@ -20,6 +21,7 @@ export default function ItemListScreen() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<ItemStatus | undefined>();
   const items = useItems({ query, status });
+  useRefreshOnFocus(items.refetch);
 
   return (
     <View style={styles.screen}>

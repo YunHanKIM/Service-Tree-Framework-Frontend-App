@@ -1,7 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, AppState, Platform, View } from 'react-native';
 import { SessionProvider, useSession } from '../auth/SessionProvider';
 import { colors } from '../components/theme';
 import { isNetworkError } from '../domain/errors';
@@ -15,6 +16,13 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
+  // 앱이 포그라운드로 돌아오면 오래된 쿼리를 다시 조회한다(웹은 TanStack이 브라우저 focus를 직접 감지).
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    const sub = AppState.addEventListener('change', (status) => focusManager.setFocused(status === 'active'));
+    return () => sub.remove();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
