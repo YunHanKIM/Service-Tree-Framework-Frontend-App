@@ -42,6 +42,11 @@ describe('SubmitButton', () => {
     expect(onPress).toHaveBeenCalledTimes(2);
   });
 
+  it('보이는 글자와 별도로 접근성 이름을 줄 수 있다', async () => {
+    await render(<SubmitButton label="반납 요청" accessibilityLabel="카메라 삼각대 반납 요청" onPress={jest.fn()} />);
+    expect(screen.getByRole('button', { name: '카메라 삼각대 반납 요청' })).toHaveTextContent('반납 요청');
+  });
+
   it('성공하면 오류 문구가 사라진다', async () => {
     const onPress = jest.fn().mockRejectedValueOnce(new ApiError('NETWORK')).mockResolvedValueOnce(undefined);
     const user = userEvent.setup();
