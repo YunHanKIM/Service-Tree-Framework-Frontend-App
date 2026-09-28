@@ -16,12 +16,12 @@
 - *관리자 화면
 
 
+https://github.com/user-attachments/assets/34409f35-788b-4210-8d1a-1a6825585427
 
-https://github.com/user-attachments/assets/9cdf5e51-24d6-4534-9f00-ad5b4869ba0c
 
 - *회원 화면
 
-https://github.com/user-attachments/assets/34409f35-788b-4210-8d1a-1a6825585427
+https://github.com/user-attachments/assets/9cdf5e51-24d6-4534-9f00-ad5b4869ba0c
 
 
 
