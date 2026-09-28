@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### 버그 수정 — Android Expo Go에서 'The bind value at index 1 is null' (2026-09-28)
+
+- 원인: `createSupabaseApi`가 `storageKey: undefined`를 명시적으로 넘겨 supabase-js의 기본 세션 키를 지웠다.
+  Android AsyncStorage(SQLite)가 undefined 키를 거부. 웹은 문자열 `"undefined"` 키로 동작해 발견되지 않았다.
+- 수정: 값이 있을 때만 `storageKey`를 넘긴다. 재현 테스트 `src/api/__tests__/supabaseApi.test.ts`.
+
 ### Supabase 실제 연결 (2026-09-28)
 
 - Supabase 프로젝트(ap-northeast-2)에 `0001_init.sql`·`0002_seed_items.sql`(시드 물품, 데모와 같은 고정 id) 적용, 데모 계정 3개 생성.

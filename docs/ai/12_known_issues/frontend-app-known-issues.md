@@ -29,6 +29,10 @@
   확인하려면 서버 프로세스를 완전히 종료하고(포트 8081 점유 확인) 다시 띄울 것.
 - **테스트 환경 설정(`jest.setup.js`)**: AsyncStorage 네이티브 모듈 목, TanStack Query 알림 스케줄러를 동기로 바꿔
   act() 경고를 없앴다.
+- **supabase-js 옵션에 `undefined` 값을 넘기지 말 것.** 옵션을 `{ ...기본값, ...옵션 }`으로 합치므로 `storageKey: undefined`가
+  기본 세션 키를 지운다. 웹 `localStorage`는 `"undefined"` 문자열 키로 받아 줘서 드러나지 않았지만, Android Expo Go에서는
+  AsyncStorage(SQLite)가 `The bind value at index 1 is null`로 실패했다(2026-09-28 사용자 보고). 값이 있을 때만 넘기도록
+  고치고 `supabaseApi.test.ts`로 고정했다. **웹 확인만으로는 네이티브 저장소 문제를 잡지 못한다** — 실기기(Expo Go) 확인 필수.
 - **jest-expo는 전역 `fetch`를 Expo 스텁으로 바꾼다.** `@jest-environment node`를 붙여도 setup 파일이 먼저 교체하므로
   실제 HTTP가 필요한 테스트는 `jest.integration.config.js`(Node 환경, jest-expo 미사용)로 돌린다. 증상은
   `"undefined" is not valid JSON`(auth-js가 응답 본문을 못 읽음).

@@ -59,7 +59,9 @@ export function createSupabaseApi(url: string, anonKey: string, { storageKey }: 
   const db: SupabaseClient = createClient(url, anonKey, {
     auth: {
       storage: AsyncStorage,
-      storageKey,
+      // supabase-js는 { ...기본값, ...옵션 }으로 합치므로 storageKey: undefined를 넘기면 기본 키가 지워진다.
+      // Android AsyncStorage(SQLite)는 undefined 키에서 "bind value ... is null"로 실패하니 값이 있을 때만 넘긴다.
+      ...(storageKey ? { storageKey } : {}),
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: false,
