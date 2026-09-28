@@ -150,6 +150,25 @@ describe('승인과 거절', () => {
     expect(active).toHaveLength(1);
   });
 
+  it('이미 승인한 신청을 다시 승인하면 CONFLICT가 아니라 ALREADY_PROCESSED', async () => {
+    const { admin, member, item } = await setup();
+    const req = await member.createRequest(item.id, TODAY);
+    await admin.approveRequest(req.id);
+    await expectCode(admin.approveRequest(req.id), 'ALREADY_PROCESSED');
+  });
+
+  it('직접 거절·취소한 신청은 물품이 대여 중이어도 ALREADY_PROCESSED', async () => {
+    const { admin, member, member2, item } = await setup();
+    const rejected = await member.createRequest(item.id, TODAY);
+    await admin.rejectRequest(rejected.id, '점검 예정');
+    const cancelled = await member2.createRequest(item.id, TODAY);
+    await member2.cancelRequest(cancelled.id);
+    await admin.approveRequest((await member.createRequest(item.id, TODAY)).id);
+
+    await expectCode(admin.approveRequest(rejected.id), 'ALREADY_PROCESSED');
+    await expectCode(admin.approveRequest(cancelled.id), 'ALREADY_PROCESSED');
+  });
+
   it('거절은 사유를 남기고, 처리된 신청을 다시 처리하면 ALREADY_PROCESSED', async () => {
     const { admin, member, item } = await setup();
     const req = await member.createRequest(item.id, TODAY);
