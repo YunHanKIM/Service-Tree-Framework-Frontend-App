@@ -1,4 +1,5 @@
 import { ApiError } from '../../domain/errors';
+import { buildItemQr, parseItemQr } from '../../domain/qr';
 import { createDemoApi, createDemoStore, DEMO_PASSWORD } from '../demoApi';
 
 const NOW = () => new Date('2026-09-28T03:00:00Z'); // 서울 2026-09-28 12:00
@@ -242,6 +243,20 @@ describe('관리자 물품 관리', () => {
 });
 
 describe('시드 데이터', () => {
+  it('기기마다 따로 만든 데모 데이터에서도 같은 물품은 같은 id다 (PC에 띄운 QR을 휴대폰으로 스캔)', async () => {
+    const pc = createDemoApi(createDemoStore(), { now: NOW });
+    const phone = createDemoApi(createDemoStore(), { now: NOW });
+    await pc.signIn('admin@billim.dev', DEMO_PASSWORD);
+    await phone.signIn('member@billim.dev', DEMO_PASSWORD);
+
+    const pcItems = await pc.listItems();
+    for (const item of pcItems) {
+      const qr = parseItemQr(buildItemQr(item.id));
+      expect(qr.ok).toBe(true);
+      if (qr.ok) await expect(phone.getItem(qr.itemId)).resolves.toMatchObject({ name: item.name });
+    }
+  });
+
   it('데모 계정과 물품이 준비되어 있다', async () => {
     const api = createDemoApi(createDemoStore(), { now: NOW });
     await api.signIn('admin@billim.dev', DEMO_PASSWORD);
