@@ -1,3 +1,5 @@
+
+https://github.com/user-attachments/assets/db78ccb4-741f-478d-b7a7-777948950a53
 # 빌림 — QR 기반 공동 물품 대여 앱
 
 동아리·스터디가 공동 물품을 QR로 대여·반납하고, 누가 무엇을 가지고 있는지 추적하는 React Native(Expo) 앱입니다.
@@ -10,6 +12,13 @@
 | 스캔 권한 | 관리자 | 승인 후(자동 거절) | 관리자 QR |
 |---|---|---|---|
 | ![스캔](docs/screenshots/06-scan.png) | ![관리자](docs/screenshots/07-admin.png) | ![승인 후](docs/screenshots/08-admin-after-approve.png) | ![QR](docs/screenshots/10-admin-item-qr.png) |
+
+| 관리자 화면 |
+https://github.com/user-attachments/assets/30b56ec9-d5b6-4d04-8ede-2d4eaa95fd5c
+
+| 회원 화면 |
+https://github.com/user-attachments/assets/77ba736c-9dcc-4d5d-97a5-91a68d667370
+
 
 ## 바로 실행하기
 
