@@ -9,15 +9,24 @@ interface Props {
   onPress: () => void;
   variant?: ButtonVariant;
   disabled?: boolean;
+  /** 보이는 글자와 다른 접근성 이름(예: 물품명 포함). 없으면 label */
+  accessibilityLabel?: string;
   /** 라벨 대신 보여줄 내용(진행 표시 등). 접근성 이름은 label을 쓴다. */
   children?: ReactNode;
 }
 
-export function AppButton({ label, onPress, variant = 'primary', disabled = false, children }: Props) {
+export function AppButton({
+  label,
+  onPress,
+  variant = 'primary',
+  disabled = false,
+  accessibilityLabel,
+  children,
+}: Props) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}

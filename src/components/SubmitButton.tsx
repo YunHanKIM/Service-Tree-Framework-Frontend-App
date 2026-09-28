@@ -9,13 +9,14 @@ interface Props {
   onPress: () => Promise<unknown>;
   variant?: ButtonVariant;
   disabled?: boolean;
+  accessibilityLabel?: string;
 }
 
 /**
  * 서버 변경 요청용 버튼. 처리 중에는 비활성화하고, 실패하면 원인 문구를 버튼 아래에 보여준다.
  * 비활성화 state가 렌더되기 전의 연속 탭도 막도록 ref로 잠근다.
  */
-export function SubmitButton({ label, onPress, variant = 'primary', disabled = false }: Props) {
+export function SubmitButton({ label, onPress, variant = 'primary', disabled = false, accessibilityLabel }: Props) {
   const lock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -37,7 +38,13 @@ export function SubmitButton({ label, onPress, variant = 'primary', disabled = f
 
   return (
     <View style={styles.wrap}>
-      <AppButton label={label} variant={variant} disabled={disabled || pending} onPress={handlePress}>
+      <AppButton
+        label={label}
+        accessibilityLabel={accessibilityLabel}
+        variant={variant}
+        disabled={disabled || pending}
+        onPress={handlePress}
+      >
         {pending ? (
           <ActivityIndicator color={variant === 'primary' ? colors.primaryText : colors.primary} />
         ) : undefined}

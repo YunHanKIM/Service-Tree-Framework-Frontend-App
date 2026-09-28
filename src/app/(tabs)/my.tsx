@@ -44,7 +44,11 @@ export default function MyRentalsScreen() {
             </View>
             <Text style={styles.meta}>반납 예정일 {loan.dueDate}</Text>
             {loan.status === 'active' ? (
-              <SubmitButton label="반납 요청" onPress={() => requestReturn(loan.id)} />
+              <SubmitButton
+                label="반납 요청"
+                accessibilityLabel={`${loan.itemName} 반납 요청`}
+                onPress={() => requestReturn(loan.id)}
+              />
             ) : (
               <Text style={styles.meta}>관리자가 실물을 확인하면 반납이 완료됩니다.</Text>
             )}
@@ -60,7 +64,12 @@ export default function MyRentalsScreen() {
             <Text style={styles.meta}>
               반납 예정일 {r.dueDate} · 신청 {formatDateTime(r.createdAt)}
             </Text>
-            <SubmitButton label="신청 취소" variant="danger" onPress={() => cancel(r.id)} />
+            <SubmitButton
+              label="신청 취소"
+              accessibilityLabel={`${r.itemName} 신청 취소`}
+              variant="danger"
+              onPress={() => cancel(r.id)}
+            />
           </Card>
         ))}
 

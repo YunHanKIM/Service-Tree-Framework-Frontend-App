@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { api } from '../../api';
@@ -18,7 +18,8 @@ function EditItem({ id }: { id: string }) {
   const item = useItem(id);
   return (
     <StateView loading={item.isPending} error={item.error} empty={false} onRetry={() => item.refetch()}>
-      {item.data && <ItemForm initial={item.data} />}
+      {/* 다른 물품으로 바뀌면 폼을 새로 만들어 이전 입력이 남지 않게 한다 */}
+      {item.data && <ItemForm key={item.data.id} initial={item.data} />}
     </StateView>
   );
 }
@@ -31,7 +32,6 @@ function ItemForm({ initial }: FormProps) {
   const [name, setName] = useState(initial?.name ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [isActive, setIsActive] = useState(initial?.isActive ?? true);
-  useEffect(() => setIsActive(initial?.isActive ?? true), [initial?.isActive]);
 
   const save = useApiMutation(
     () =>
