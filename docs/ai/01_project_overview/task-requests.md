@@ -1,6 +1,6 @@
 # 빌림 — 요구사항 → 요청문(TASK) 변환
 
-정본 요구사항: `requirements-v1.1.md` (기획안 1.1). 변환 규칙: MultiAgent 루트의 `요구사항_TASK_전환_Format.md`.
+정본 요구사항: `requirements-v1.1.md`(같은 폴더) (기획안 1.1). 변환 규칙: MultiAgent 루트의 `요구사항_TASK_전환_Format.md`.
 
 ## 변환 공통값
 
