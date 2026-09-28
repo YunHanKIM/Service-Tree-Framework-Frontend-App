@@ -28,7 +28,13 @@ export function AppButton({ label, onPress, variant = 'primary', disabled = fals
         pressed && !disabled && styles.pressed,
       ]}
     >
-      {children ?? <Text style={[styles.label, variant !== 'primary' && styles.labelAlt]}>{label}</Text>}
+      {children ?? (
+        <Text
+          style={[styles.label, variant === 'secondary' && styles.labelAlt, variant === 'danger' && styles.labelDanger]}
+        >
+          {label}
+        </Text>
+      )}
     </Pressable>
   );
 }
@@ -48,4 +54,5 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.8 },
   label: { color: colors.primaryText, fontSize: 16, fontWeight: '600' },
   labelAlt: { color: colors.text },
+  labelDanger: { color: colors.danger },
 });
