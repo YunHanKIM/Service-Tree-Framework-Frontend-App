@@ -45,18 +45,21 @@ function seedDemoData(store: DemoStore) {
   const now = new Date();
   const today = todayInSeoul(now);
   const iso = (daysAgo: number) => new Date(now.getTime() - daysAgo * 86400000).toISOString();
-  const item = (name: string, description: string, isActive = true): ItemRow => {
-    const row = { id: uuid(), name, description, isActive, createdAt: iso(30) };
+  // 시드 물품 id는 고정한다. 데모 데이터는 기기마다 따로 만들어지므로, 무작위 id면
+  // PC 화면에 띄운 QR을 휴대폰(Expo Go)으로 스캔했을 때 '등록되지 않은 물품'이 된다.
+  const item = (seq: number, name: string, description: string, isActive = true): ItemRow => {
+    const id = `b1110000-0000-4000-8000-${String(seq).padStart(12, '0')}`;
+    const row = { id, name, description, isActive, createdAt: iso(30) };
     store.items.push(row);
     return row;
   };
 
-  const projector = item('빔 프로젝터', '회의실용 FHD 프로젝터. HDMI 케이블 포함.');
-  item('노트북 거치대', '알루미늄 접이식 거치대.');
-  const game = item('보드게임 스플렌더', '2~4인. 카드 누락 없는지 반납 시 확인.');
-  const tripod = item('카메라 삼각대', '최대 160cm. 스마트폰 홀더 포함.');
-  item('무선 마이크 세트', '마이크 2개와 수신기. 건전지는 AA.');
-  item('멀티탭 5구', '전선 피복 손상으로 점검 중.', false);
+  const projector = item(1, '빔 프로젝터', '회의실용 FHD 프로젝터. HDMI 케이블 포함.');
+  item(2, '노트북 거치대', '알루미늄 접이식 거치대.');
+  const game = item(3, '보드게임 스플렌더', '2~4인. 카드 누락 없는지 반납 시 확인.');
+  const tripod = item(4, '카메라 삼각대', '최대 160cm. 스마트폰 홀더 포함.');
+  item(5, '무선 마이크 세트', '마이크 2개와 수신기. 건전지는 AA.');
+  item(6, '멀티탭 5구', '전선 피복 손상으로 점검 중.', false);
 
   // 이회원이 삼각대를 대여 중(기한 경과), 보드게임은 반납 요청 중
   const tripodReq: RequestRow = {
