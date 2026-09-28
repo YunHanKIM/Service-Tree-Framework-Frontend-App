@@ -1,9 +1,14 @@
-import { useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { api } from '../api';
 import type { ItemStatus } from '../domain/types';
 
 export function useItems(params: { query?: string; status?: ItemStatus }) {
-  return useQuery({ queryKey: ['items', params], queryFn: () => api.listItems(params) });
+  // 검색어를 입력하는 동안 이전 결과를 유지해 목록이 깜빡이지 않게 한다.
+  return useQuery({
+    queryKey: ['items', params],
+    queryFn: () => api.listItems(params),
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useItem(id: string) {
