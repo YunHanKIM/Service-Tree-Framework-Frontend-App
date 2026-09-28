@@ -33,11 +33,12 @@ Supabase 모드에서는 새로 등록한 물품도 기기 간에 공유된다.
 3. 데모 계정: 앱에서 `admin@billim.dev`, `member@billim.dev`, `member2@billim.dev`(비밀번호 `demo1234`)로 가입한 뒤
    `update public.profiles set role = 'admin' where email = 'admin@billim.dev';`
 4. `.env.example`을 `.env.local`로 복사해 Project URL과 anon(publishable) 키를 넣는다. **service_role 키 금지.**
-5. 통합 테스트:
+5. 통합 테스트(세 값이 모두 있어야 실행):
    ```bash
-   SUPABASE_TEST_URL=<url> SUPABASE_TEST_ANON_KEY=<key> npm run test:supabase
+   SUPABASE_TEST_URL=<url> SUPABASE_TEST_ANON_KEY=<key> SUPABASE_TEST_DB_URL=<session pooler 접속 문자열> npm run test:supabase
    ```
-   테스트가 만든 물품은 이름이 `[테스트]`로 시작한다. 삭제 정책이 없으므로 SQL로 정리한다:
+   테스트는 이번 실행 표식(`[테스트:<id>]`)이 붙은 물품과 그 신청·대여를 끝날 때 DB 접속으로 지운다(앱 RLS에는 삭제
+   정책이 없어 관리 채널로만 정리). 중간에 강제 종료해 남은 데이터가 있으면 SQL로 정리한다:
    ```sql
    delete from public.loans where item_id in (select id from public.items where name like '[테스트]%');
    delete from public.requests where item_id in (select id from public.items where name like '[테스트]%');

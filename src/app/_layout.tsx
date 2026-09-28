@@ -10,7 +10,12 @@ import { isNetworkError } from '../domain/errors';
 const queryClient = new QueryClient({
   defaultOptions: {
     // 네트워크 오류만 한 번 재시도한다. 권한·없음 같은 서버 판정은 재시도해도 같다.
-    queries: { retry: (count, error) => count < 1 && isNetworkError(error), staleTime: 10_000 },
+    // 앱(또는 브라우저 탭)으로 돌아오면 staleTime과 관계없이 다시 조회한다 — 다른 기기의 승인·반납을 바로 보여주기 위해.
+    queries: {
+      retry: (count, error) => count < 1 && isNetworkError(error),
+      staleTime: 10_000,
+      refetchOnWindowFocus: 'always',
+    },
     mutations: { retry: false },
   },
 });

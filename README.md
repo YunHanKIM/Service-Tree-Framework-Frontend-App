@@ -54,7 +54,7 @@ Supabase 설정 절차는 `docs/ai/13_deploy_runbook/` 참조(스키마: `supaba
 ```bash
 npm test            # Jest + React Native Testing Library
 npm run typecheck
-npm run test:supabase   # 실제 Supabase 통합 테스트(SUPABASE_TEST_URL, SUPABASE_TEST_ANON_KEY 필요)
+npm run test:supabase   # 실제 Supabase 통합 테스트(SUPABASE_TEST_URL·ANON_KEY·DB_URL 필요, 만든 데이터는 끝나면 삭제)
 ```
 
 커밋 이력에 `test:`(실패하는 테스트) → `feat:`(통과시키는 구현) 순서가 남아 있습니다(`git log --oneline`).

@@ -1,18 +1,23 @@
 /**
  * 실제 Supabase 프로젝트에 대한 통합 테스트(jest.integration.config.js — jest-expo가 fetch를 스텁으로 바꾸므로 별도 설정). demoApi.test.ts와 같은 규칙을 서버(RLS·RPC)가 지키는지 확인한다.
- * 환경변수가 없으면 건너뛴다(일반 `npm test`에는 영향 없음).
- *   SUPABASE_TEST_URL, SUPABASE_TEST_ANON_KEY  — 데모 계정 3개(admin/member/member2@billim.dev, demo1234)가 있어야 한다
+ * 환경변수가 모두 있어야 실행한다(없으면 건너뜀, 일반 `npm test`에는 포함되지 않음).
+ *   SUPABASE_TEST_URL, SUPABASE_TEST_ANON_KEY — 데모 계정 3개(admin/member/member2@billim.dev, demo1234)가 있어야 한다
+ *   SUPABASE_TEST_DB_URL — 정리용 DB 접속 문자열(Session pooler). 앱 RLS에는 삭제 정책이 없으므로
+ *                          테스트가 만든 데이터는 이 관리 채널로만 지운다. 정리 경로 없이 실DB를 오염시키지 않도록 필수.
  * 실행: npm run test:supabase
- * 테스트가 만든 물품 이름은 '[테스트]'로 시작한다(삭제 정책이 없어 SQL로 정리).
  */
 import { createClient } from '@supabase/supabase-js';
+import { Client } from 'pg';
 import { addDays, todayInSeoul } from '../../domain/dueDate';
 import { createSupabaseApi } from '../supabaseApi';
 
 const URL = process.env.SUPABASE_TEST_URL;
 const KEY = process.env.SUPABASE_TEST_ANON_KEY;
+const DB_URL = process.env.SUPABASE_TEST_DB_URL;
 const PASSWORD = 'demo1234';
-const run = URL && KEY ? describe : describe.skip;
+const run = URL && KEY && DB_URL ? describe : describe.skip;
+// 이번 실행이 만든 물품만 지우기 위한 표식
+const RUN_TAG = `[테스트:${Date.now().toString(36)}]`;
 
 jest.setTimeout(30_000);
 
@@ -23,13 +28,28 @@ run('Supabase 통합', () => {
   const admin = api('admin');
   const member = api('member');
   const member2 = api('member2');
-  const newItem = (label: string) =>
-    admin.createItem({ name: `[테스트] ${label} ${Date.now()}`, description: '통합 테스트' });
+  const newItem = (label: string) => admin.createItem({ name: `${RUN_TAG} ${label}`, description: '통합 테스트' });
 
   beforeAll(async () => {
     await admin.signIn('admin@billim.dev', PASSWORD);
     await member.signIn('member@billim.dev', PASSWORD);
     await member2.signIn('member2@billim.dev', PASSWORD);
+  });
+
+  afterAll(async () => {
+    const db = new Client({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
+    await db.connect();
+    try {
+      const tagged = `select id from public.items where name like $1`;
+      const like = `${RUN_TAG}%`;
+      await db.query('begin');
+      await db.query(`delete from public.loans where item_id in (${tagged})`, [like]);
+      await db.query(`delete from public.requests where item_id in (${tagged})`, [like]);
+      await db.query(`delete from public.items where name like $1`, [like]);
+      await db.query('commit');
+    } finally {
+      await db.end();
+    }
   });
 
   it('틀린 비밀번호는 INVALID_CREDENTIALS', async () => {
@@ -59,7 +79,7 @@ run('Supabase 통합', () => {
     await expect(member.createItem({ name: 'x', description: '' })).rejects.toMatchObject({ code: 'FORBIDDEN' });
     const raw = createClient(URL!, KEY!, { auth: { persistSession: false } });
     await raw.auth.signInWithPassword({ email: 'member@billim.dev', password: PASSWORD });
-    const { error } = await raw.from('items').insert({ name: '[테스트] 무단 등록' });
+    const { error } = await raw.from('items').insert({ name: `${RUN_TAG} 무단 등록` });
     expect(error).not.toBeNull();
   });
 
