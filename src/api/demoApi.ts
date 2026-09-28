@@ -7,6 +7,8 @@ import type { Item, Loan, Profile, RentalRequest } from '../domain/types';
 import type { Api } from './types';
 
 export const DEMO_PASSWORD = 'demo1234';
+// 다른 신청 승인으로 자동 거절될 때의 사유. SQL(approve_request)과 같은 문자열이어야 한다.
+export const AUTO_REJECT_REASON = '다른 신청이 승인되어 자동 거절되었습니다.';
 
 type ItemRow = { id: string; name: string; description: string; isActive: boolean; createdAt: string };
 type RequestRow = Omit<RentalRequest, 'itemName' | 'userName'>;
@@ -245,7 +247,9 @@ export function createDemoApi(
       const admin = requireAdmin();
       const request = findRequest(requestId);
       if (request.status !== 'pending') {
-        throw new ApiError(openLoanOf(request.itemId) ? 'CONFLICT' : 'ALREADY_PROCESSED');
+        // 동시 승인에서 진 쪽(자동 거절됨)만 CONFLICT. 그 밖의 처리된 신청은 ALREADY_PROCESSED.
+        const lostRace = request.status === 'rejected' && request.rejectReason === AUTO_REJECT_REASON;
+        throw new ApiError(lostRace ? 'CONFLICT' : 'ALREADY_PROCESSED');
       }
       if (openLoanOf(request.itemId)) throw new ApiError('CONFLICT');
 
@@ -256,7 +260,7 @@ export function createDemoApi(
       for (const other of store.requests) {
         if (other.itemId === request.itemId && other.status === 'pending') {
           other.status = 'rejected';
-          other.rejectReason = '다른 신청이 승인되어 자동 거절되었습니다.';
+          other.rejectReason = AUTO_REJECT_REASON;
           other.processedBy = admin.id;
           other.processedAt = at;
         }

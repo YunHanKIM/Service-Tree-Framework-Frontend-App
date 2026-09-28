@@ -259,7 +259,10 @@ begin
   select * into v_req from public.requests where id = p_request_id for update;
 
   if v_req.status <> 'pending' then
-    if public.item_has_open_loan(v_item_id) then raise exception 'CONFLICT'; end if;
+    -- 동시 승인에서 진 쪽(자동 거절됨)만 CONFLICT. 사유 문자열은 src/api/demoApi.ts AUTO_REJECT_REASON과 같다.
+    if v_req.status = 'rejected' and v_req.reject_reason = '다른 신청이 승인되어 자동 거절되었습니다.' then
+      raise exception 'CONFLICT';
+    end if;
     raise exception 'ALREADY_PROCESSED';
   end if;
   if public.item_has_open_loan(v_item_id) then raise exception 'CONFLICT'; end if;

@@ -115,6 +115,7 @@ export function createSupabaseApi(url: string, anonKey: string): Api {
       return (await run(q)).map(toItem);
     },
     async getItem(id) {
+      await me();
       const [row] = await run(db.from('item_view').select('*').eq('id', id));
       if (!row) throw new ApiError('NOT_FOUND');
       return toItem(row);
