@@ -3,6 +3,7 @@ export type ApiErrorCode =
   | 'FORBIDDEN'
   | 'INVALID_CREDENTIALS'
   | 'EMAIL_TAKEN'
+  | 'CONFIRM_EMAIL'
   | 'NOT_FOUND'
   | 'INVALID_DATE'
   | 'PAST_DATE'
@@ -29,6 +30,7 @@ const MESSAGES: Record<ApiErrorCode, string> = {
   FORBIDDEN: '이 작업을 할 권한이 없습니다.',
   INVALID_CREDENTIALS: '이메일 또는 비밀번호가 올바르지 않습니다.',
   EMAIL_TAKEN: '이미 가입된 이메일입니다.',
+  CONFIRM_EMAIL: '가입 확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 로그인해 주세요.',
   NOT_FOUND: '등록되지 않은 물품입니다.',
   INVALID_DATE: '반납 예정일 형식이 올바르지 않습니다.',
   PAST_DATE: '반납 예정일은 오늘 이후여야 합니다.',
