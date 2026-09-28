@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from '@testing-library/react-native';
+import { act, render, screen, userEvent } from '@testing-library/react-native';
 import { ApiError } from '../../domain/errors';
 import { SubmitButton } from '../SubmitButton';
 
@@ -25,7 +25,7 @@ describe('SubmitButton', () => {
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('button', { name: '대여 신청' })).toBeDisabled();
-    d.resolve();
+    await act(async () => d.resolve());
   });
 
   it('실패하면 원인 문구를 보여주고 다시 누를 수 있다', async () => {
