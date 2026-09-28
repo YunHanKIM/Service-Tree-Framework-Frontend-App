@@ -54,9 +54,16 @@ const toLoan = (r: Row): Loan => ({
 // ilike 패턴의 와일드카드를 이스케이프한다.
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
-export function createSupabaseApi(url: string, anonKey: string): Api {
+/** storageKey: 한 프로세스에서 여러 사용자로 로그인할 때(통합 테스트) 세션 저장 위치를 나눈다. */
+export function createSupabaseApi(url: string, anonKey: string, { storageKey }: { storageKey?: string } = {}): Api {
   const db: SupabaseClient = createClient(url, anonKey, {
-    auth: { storage: AsyncStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+    auth: {
+      storage: AsyncStorage,
+      storageKey,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+    },
   });
 
   // 오류는 ApiError로 바꿔 던지고, 성공하면 data를 돌려준다. 행은 스키마 타입 없이 Row로 다룬다.

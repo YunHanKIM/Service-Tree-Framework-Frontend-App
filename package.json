@@ -37,7 +37,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:supabase": "jest -c jest.integration.config.js --runInBand"
   },
   "private": true,
   "jest": {
@@ -47,6 +48,10 @@
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      ".integration.test.ts$"
     ]
   }
 }
