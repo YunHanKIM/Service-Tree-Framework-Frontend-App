@@ -16,7 +16,7 @@
 - *관리자 화면
 
 
-https://github.com/user-attachments/assets/34409f35-788b-4210-8d1a-1a6825585427
+https://github.com/user-attachments/assets/318aed6a-51b8-47e3-9289-009c02b58da8
 
 
 - *회원 화면
