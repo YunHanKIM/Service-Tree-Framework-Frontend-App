@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Supabase 실제 연결 (2026-09-28)
+
+- Supabase 프로젝트(ap-northeast-2)에 `0001_init.sql`·`0002_seed_items.sql`(시드 물품, 데모와 같은 고정 id) 적용, 데모 계정 3개 생성.
+- 통합 테스트 `npm run test:supabase` 10개 — 역할 상승 차단, RLS 가시성, 중복 신청, 자동 거절, 동시 승인 1건, 반납, 취소를
+  실서버로 확인(3회 연속 통과). jest-expo가 fetch를 스텁으로 바꾸므로 별도 설정(`jest.integration.config.js`).
+- **버그 수정 — 다른 기기 변경이 열린 화면에 반영 안 됨**: `useRefreshOnFocus`(화면 포커스 재조회)와 AppState → focusManager.
+- **버그 수정 — Expo Go로 PC 화면 QR 스캔 시 '등록되지 않은 물품'**(사용자 보고): 데모 시드 물품 id가 기기마다 무작위였다 → 고정 id.
+- 검증: 브라우저 3컨텍스트(회원·관리자·회원)로 신청→승인→다른 기기 반영, 신규 물품 기기 간 공유, 새로고침 후 세션 유지.
+
 ### 빌림 v0.1 — 첫 구현 (2026-09-28)
 
 - Expo SDK 57 + TypeScript 프로젝트 생성, Expo Router·expo-camera·TanStack Query·Supabase·Jest/RNTL 설정.

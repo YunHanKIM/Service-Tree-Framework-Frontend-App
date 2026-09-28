@@ -5,9 +5,9 @@
 - **기본 백엔드는 데모(메모리) 구현이다.** 설치 즉시 화면을 볼 수 있게 하려는 선택이다. 앱을 새로고침하면
   데이터가 시드 상태로 돌아간다. 데모 계정: `member@billim.dev`, `member2@billim.dev`, `admin@billim.dev`
   (비밀번호 `demo1234`).
-- **Supabase 구현은 실제 프로젝트에 연결해 검증하지 않았다.** 개발 환경에 Supabase 프로젝트·Docker가 없어
-  SQL과 `supabaseApi.ts`는 코드 리뷰(codex-critic)까지만 거쳤다. 연결 절차는 `13_deploy_runbook` 참조.
-  두 구현의 규칙이 같은지는 `demoApi.test.ts` 시나리오를 기준으로 맞춘다.
+- **Supabase 구현은 실제 프로젝트(ap-northeast-2)에서 검증했다(2026-09-28).** `npm run test:supabase` 통합 테스트
+  10개가 역할 상승 차단·RLS 가시성·중복 신청·자동 거절·동시 승인·반납·취소를 실서버로 확인한다. 두 구현의 규칙은
+  `demoApi.test.ts`(데모)와 `supabaseApi.integration.test.ts`(실서버)가 같은 시나리오로 고정한다.
 - **물품 사진 업로드는 제외했다**(요구사항상 선택 범위). `image_path` 컬럼만 있다.
 
 ## 함정
@@ -29,5 +29,13 @@
   확인하려면 서버 프로세스를 완전히 종료하고(포트 8081 점유 확인) 다시 띄울 것.
 - **테스트 환경 설정(`jest.setup.js`)**: AsyncStorage 네이티브 모듈 목, TanStack Query 알림 스케줄러를 동기로 바꿔
   act() 경고를 없앴다.
+- **jest-expo는 전역 `fetch`를 Expo 스텁으로 바꾼다.** `@jest-environment node`를 붙여도 setup 파일이 먼저 교체하므로
+  실제 HTTP가 필요한 테스트는 `jest.integration.config.js`(Node 환경, jest-expo 미사용)로 돌린다. 증상은
+  `"undefined" is not valid JSON`(auth-js가 응답 본문을 못 읽음).
+- **React Native에서는 탭을 오가도 쿼리가 다시 조회되지 않는다.** 다른 기기의 승인이 이미 열린 화면에 반영되지 않아
+  `useRefreshOnFocus`(화면 포커스)와 `AppState → focusManager`(앱 포그라운드)를 넣었다. 새 데이터 화면에도 적용할 것.
+  `useRefreshOnFocus`에 넘기는 함수가 렌더마다 새로 만들어져도 되도록 훅이 ref로 들고 있다.
+- **Supabase 직접 접속 주소(`db.<ref>.supabase.co`)는 IPv6 전용이다.** IPv4 네트워크에서는 ENOTFOUND — SQL 실행은
+  Session pooler 주소(`aws-0-<region>.pooler.supabase.com`, 사용자 `postgres.<ref>`)로 한다.
 - **개발 PC에 Android SDK가 없다.** 화면 확인은 웹(`--web`)이나 휴대폰 Expo Go로 한다. 웹에서는 카메라 권한
   흐름이 브라우저 정책을 따른다(HTTPS 또는 localhost 필요).

@@ -19,7 +19,8 @@ npx expo start --web     # 브라우저: http://localhost:8081
 npx expo start           # 휴대폰: Expo Go 앱으로 터미널의 QR 스캔 (같은 와이파이)
 ```
 
-별도 설정 없이 **데모(메모리) 백엔드**로 실행됩니다. 로그인 화면의 데모 계정 버튼으로 바로 들어갈 수 있습니다.
+`.env.local`이 없으면 **데모(메모리) 백엔드**로 실행되고, 로그인 화면의 데모 계정 버튼으로 바로 들어갈 수 있습니다.
+`.env.local`에 Supabase 값을 넣으면(`.env.example` 참고) 실제 서버를 쓰며, 여러 기기가 같은 데이터를 봅니다.
 
 | 계정 | 역할 | 비밀번호 |
 |---|---|---|
@@ -27,7 +28,7 @@ npx expo start           # 휴대폰: Expo Go 앱으로 터미널의 QR 스캔 (
 | member2@billim.dev | 회원(이회원) | demo1234 |
 | admin@billim.dev | 관리자(박관리) | demo1234 |
 
-Supabase로 연결하려면 `docs/ai/13_deploy_runbook/` 참조(스키마: `supabase/migrations/0001_init.sql`).
+Supabase 설정 절차는 `docs/ai/13_deploy_runbook/` 참조(스키마: `supabase/migrations/`).
 
 ## 주요 기능
 
@@ -53,6 +54,7 @@ Supabase로 연결하려면 `docs/ai/13_deploy_runbook/` 참조(스키마: `supa
 ```bash
 npm test            # Jest + React Native Testing Library
 npm run typecheck
+npm run test:supabase   # 실제 Supabase 통합 테스트(SUPABASE_TEST_URL, SUPABASE_TEST_ANON_KEY 필요)
 ```
 
 커밋 이력에 `test:`(실패하는 테스트) → `feat:`(통과시키는 구현) 순서가 남아 있습니다(`git log --oneline`).
@@ -69,6 +71,6 @@ AI 협업 하네스 문서는 `docs/ai/`에 있습니다(요구사항 정의서,
 
 ## 알려진 한계
 
-- 데모 백엔드는 새로고침하면 초기화되며, 브라우저 탭마다 데이터가 따로입니다.
-- Supabase 연결은 실제 프로젝트에서 검증하지 않았습니다(`docs/ai/12_known_issues/`).
+- 데모 백엔드는 새로고침하면 초기화되며, 기기마다 데이터가 따로입니다(시드 물품 QR은 기기 간에도 인식).
+- 실시간 구독은 없고, 화면에 다시 들어오거나 앱이 포그라운드로 돌아올 때 다시 조회합니다.
 - 물품 사진 업로드, 푸시 알림은 범위에서 제외했습니다.
